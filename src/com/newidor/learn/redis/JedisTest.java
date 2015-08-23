@@ -1,6 +1,8 @@
 package com.newidor.learn.redis;
 
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.ResourceBundle;
 
 import org.junit.Test;
@@ -25,18 +27,27 @@ public class JedisTest {
 		
 		Jedis redis = new Jedis("192.168.1.109",6379);
 		
-		redis.set("name", "haoxiaoxin");
-		redis.setex("congtent", 5, "hello");
-		redis.mset("class","a","age","25");
-		redis.append("content", "lucy");
+		//字符串
+		redis.set("name", "haoxiaoxin"); //设置key-value
+		redis.setex("congtent", 5, "hello"); //设置key-value 有效期5s，ex应该表示expire的意思
+		redis.append("content", "lucy"); //字符串追加内容
 		String content = redis.get("content");
-		
 		System.out.println(content);
-		List<String> list = redis.mget("class","age");
 		
+		//一次设置多个
+		redis.mset("class","a","age","25"); //一次设置多个key-value
+		List<String> list = redis.mget("class","age"); //一次获取多个结果，m代表多的意思
 		for (String string : list) {
 			System.out.println(string);
 		}
+		
+		//map
+		Map<String,String> map = new HashMap<String,String>();
+		map.put("name", "haoxiaoxin");
+		map.put("age", "28");
+		redis.hmset("userinfo", map);
+		Map<String,String> userinfo = redis.hgetAll("userinfo");
+		System.out.println(userinfo.get("age"));
 		
 		redis.close();
 		
@@ -76,7 +87,7 @@ public class JedisTest {
 		String value = jedis.get(keys);
 
 		System.out.println(value);
-
+		
 		// 释放对象池
 		pool.returnResource(jedis);
 	}
